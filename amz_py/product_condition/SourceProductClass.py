@@ -13,10 +13,18 @@ orders 总订单量
 """
 class Product:
 
-    def __init__(self,datetime=None,parentasin=None,childasin=None,title=None,
-                n_pageviews=None,n_orders,n_sales,n_averagePrice,n_conversionRate,
-                a_pageviews,a_ppc,a_spend,a_orders,a_sales,a_acos,a_conversionRate,
-                t_pageviews,t_session,cart_percentage,t_sales,t_conversionRate,t_orders):
+#为所有形参加上默认属性None
+
+    def __init__(self,datetime=None, parentasin=None, childasin=None, title=None,
+                 n_pageviews=None, n_orders=None, n_sales=None, n_averagePrice=None, n_conversionRate=None,
+                 a_pageviews=None, a_ppc=None, a_spend=None, a_orders=None,a_sales=None, a_acos=None, a_conversionRate=None,
+                 t_pageviews=None, t_session=None, cart_percentage=None, t_sales=None, t_conversionRate=None, t_orders=None):
+
+        self.datetime = datetime
+        self.parentasin = parentasin
+        self.childasin = childasin
+
+
 
 
 
