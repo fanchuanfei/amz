@@ -2,8 +2,8 @@
 
 from datetime import datetime
 
-#产品业务表信息类
-#每一个子Sku为一个类
+# 产品业务表信息类
+# 每一个子Sku为一个类
 
 """
 parentasin 父Aisn
