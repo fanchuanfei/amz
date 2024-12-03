@@ -1,5 +1,5 @@
 from openpyxl import load_workbook
-from test.SourceInput import getdate
+from amz_py.product_condition.SourceInput import getdate
 # from test.TargetOutput import update_sheet
 
 # 遍历字典
