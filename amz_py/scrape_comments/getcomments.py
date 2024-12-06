@@ -9,3 +9,8 @@ page  = browser.new_page()
 page.goto("https://www.amazon.com/ref=nav_logo")
 
 print(page.title())
+page.locator("#twotabsearchtextbox").fill("B0CP1TSMST")
+
+page.locator("#nav-search-submit-button").click()
+
+print(page.locator(".a-declarative").all())
