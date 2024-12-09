@@ -32,7 +32,7 @@ def getdate(fileaddress):
         amdatetime = datetime.now()
         t_session = sourceworksheet.cell(i, 4).value
         t_pageviews = sourceworksheet.cell(i, 8).value
-        t_cartPercentage = sourceworksheet.cell(i, 12).value
+        t_cartpercentage = sourceworksheet.cell(i, 12).value
         t_sales = sourceworksheet.cell(i, 14).value
         t_conversionRate = sourceworksheet.cell(i, 16).value
         t_salesVolume = sourceworksheet.cell(i, 18).value
