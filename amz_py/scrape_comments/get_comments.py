@@ -1,66 +1,94 @@
-from playwright.sync_api import sync_playwright
+import re
+import requests
+from playwright.sync_api import Playwright, sync_playwright, expect
 import ddddocr
-# 启动 playwright driver进程
-p = sync_playwright().start()
-
-# 启动浏览器
-browser = p.chromium.launch(headless=False,executable_path=r'C:\Program Files\Google\Chrome\Application\chrome.exe')
-
-# 创建page页面
-page = browser.new_page()
-
-# 设置默认超时时间
-page.set_default_timeout(500000)
-
-#爬取的网址 https://www.amazon.com/Microwave-Replacement-KW3AT-16-1x-KW3A-16/dp/B09DKG2MJ9
-category_url = "https://www.amazon.com/Microwave-Replacement-KW3AT-16-1x-KW3A-16/dp/"
-asin_list = ["B09DKG2MJ9"]
-full_path = category_url+asin_list.pop()
 
 
-# 进入网站
-page.goto(full_path)
-
-# page.wait_for_timeout(500000)
-# 判断是否遇到了图片验证码
-if page.title()=="Amazon.com":
-
-    # 获取图片地址
-    imagurl = page.locator(".a-row a-text-center img").get_attribute("src")
-
-    print(imagurl)
-    # 打开图片 二进制形式
-    f = open(imagurl,'rb')
-
-    img = f.read()
+def get_code(url):
+    response = requests.get(url)
 
     ocr = ddddocr.DdddOcr()
 
-    # ddddocr是一个开源库 识别验证码
-    code = ocr.classification(img)
+    code = ocr.classification(response.content)
 
-    # 输入code进入目标页面
-    page.locator("#captchacharacters").fill(code)
+    return code
 
-    # 提交
-    page.locator(".a-button-text").click()
+def run(playwright: Playwright,catogaryurl,asin_list) -> None:
+    browser = playwright.chromium.launch(headless=False)
+    context = browser.new_context()
+    page = context.new_page()
 
+    # 伪装
+    page.set_extra_http_headers({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9"
+    })
 
-
-# 定位与操作
-page.locator(".a-link-emphasis a-text-bold").click()
-
-page.locator(".cr-filter-secondary-view-link").click()
-
-page.locator(".star-option-critical").click()
-
-page.locator(".a-button-input").click()
-
-content = page.locator("#cm_cr-review_list").all()
-
-print(content)
-# 关闭浏览器哦
+    # 进入主页
+    page.goto("https://www.amazon.com/")
 
 
-browser.stop_tracing()
+    #三种情况 1.被识别为机器人  2.没有被识别为机器人直接登录 3.没有被识别为机器人并且不需要登录
+    while page.title() == "Amazon.com":
 
+        print("1.被识别为机器人,或识别错误")
+        # 获取图片地址pip
+        loc = page.locator(".a-box-inner")
+        url = loc.locator("img").get_attribute("src")
+        # 解析为验证码
+
+        response = requests.get(url)
+
+        ocr = ddddocr.DdddOcr()
+
+        code = ocr.classification(response.content)
+
+        print(code)
+        # 输入code进入目标页面
+        page.locator("#captchacharacters").fill(code)
+
+        # 提交
+        page.locator(".a-button-text").click()
+
+    # 需要登录
+
+    page.wait_for_timeout(20000)
+    page.get_by_role("link", name="Sign in", exact=True).click()
+    page.get_by_label("Email or mobile phone number").click()
+    page.get_by_label("Email or mobile phone number").fill("liuwannianliu@gmail.com")
+    page.get_by_label("Continue").click()
+    page.get_by_label("Password").click()
+    page.get_by_label("Password").fill("liu2391042097")
+    page.get_by_label("Sign in").click()
+
+
+
+    # 遍历读取数据
+
+    for asin in asin_list:
+        #目标路径
+        fullurl = catogaryurl + asin
+
+        page.goto(fullurl)
+
+        #查看所有评论
+        page.locator("#cr-pagination-footer-0").get_by_role("link", name="See more reviews").click()
+
+        page.locator("#a-autoid-5-announce").click()
+
+        # 根据消极评论分类
+        page.get_by_label("Critical reviews").get_by_text("Critical reviews").click()
+
+
+
+
+    # ---------------------
+    context.close()
+    browser.close()
+
+
+with sync_playwright() as playwright:
+    catogaryurl = "https://www.amazon.com/dp/"
+    asin_list = ["B09DKG2MJ9","B08V4LDPSL","B089QCKGJF"]
+
+    run(playwright,catogaryurl,asin_list)
