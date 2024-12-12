@@ -13,6 +13,8 @@ def get_code(url):
 
     return code
 
+
+
 def run(playwright: Playwright,catogaryurl,asin_list) -> None:
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()
@@ -49,19 +51,20 @@ def run(playwright: Playwright,catogaryurl,asin_list) -> None:
 
         # 提交
         page.locator(".a-button-text").click()
+        
 
-    # 需要登录
 
-    page.wait_for_timeout(20000)
-    page.get_by_role("link", name="Sign in", exact=True).click()
-    page.get_by_label("Email or mobile phone number").click()
+    page.locator("#nav-tools > a:nth-child(2)").click()
+
     page.get_by_label("Email or mobile phone number").fill("liuwannianliu@gmail.com")
+
     page.get_by_label("Continue").click()
-    page.get_by_label("Password").click()
+
     page.get_by_label("Password").fill("liu2391042097")
+
     page.get_by_label("Sign in").click()
 
-
+    page.wait_for_timeout(10000)
 
     # 遍历读取数据
 
@@ -78,6 +81,22 @@ def run(playwright: Playwright,catogaryurl,asin_list) -> None:
 
         # 根据消极评论分类
         page.get_by_label("Critical reviews").get_by_text("Critical reviews").click()
+
+
+        # 翻页读取评论
+        # 当下一页标签可以点击的时候持续循环  while 条件有没有a标签   html: li a  3个span（有下一页）     li   3个span（没有下一页）
+        while page.query_selector('ul.a-pagination li.a-last').query_selector('a'):
+            # 如果有下一页持续循环获取文本 .a-size-base review-text review-text-content  > span标签里面装文本
+            print("还有评论")
+
+            loclist = page.locator("div#cm_cr-review_list > div.a-section.review.aok-relative")
+
+            #遍历所有的 评论div
+            for i in range(loclist.count()):
+                loc = loclist.nth(i)
+
+                loc.locator()
+
 
 
 
