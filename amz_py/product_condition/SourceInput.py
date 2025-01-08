@@ -1,4 +1,4 @@
-from amz_py.dao.SourceProductClass import Product
+from amz_py.dao.SourceProduct import Product
 from typing import Set
 import pandas as pd
 import os
@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from openpyxl import load_workbook
 
 # 数据源文件转换
-
+# folder_path：存放数据源文件夹的地址
 def convert_csv_to_xlsx(folder_path):
     for filename in os.listdir(folder_path):
         if filename.endswith('.csv'):

@@ -30,24 +30,26 @@ class Product:
     n_pageviews: int = None
     n_salesVolume: int = None
     n_sales: float = None
-    n_averagePrice: float = None
     n_conversionRate: float = None
 
     # 订单广告数据
-    a_pageviews: int = None
-    a_ppc: float = None
-    a_spend: float = None  #广告花费
+
+    a_pageviews: int = None  # 点击
+    a_ppc: float = None   # 平均竞价
+    a_spend: float = None  # 广告花费
     a_salesVolume: int = None
     a_sales: float = None
-    a_acos: float = None
+    a_displayQuantity: int = None  # 展示量
+    a_acos: float = None # 广告花费在广告销售中的占比
     a_conversionRate: float = None
 
     # 订单整体数据
     t_pageviews: int = None
+    t_averagePrice: float = None
     t_orders: int = None
     t_salesVolume: int = None
-    t_tacos: float = None
-    t_adSales: float = None
+    t_tacos: float = None  # 广告花费在全部销售的占比
+    t_adSales: float = None  # 广告销售在全部销售的占比
     t_conversionRate: float = None
     t_ranking: int = None
     t_rating: float = None
@@ -55,7 +57,16 @@ class Product:
     t_cartPercentage: float = None
     t_sales: float = None
 
+
+
     # Getter and Setter for each field
+
+    def get_a_displayQuantity(self):
+        return self.a_displayQuantity
+
+    def set_a_displayQuantity(self):
+        return self.a_displayQuantity
+
     def get_datetime(self):
         return self.datetime
 
@@ -99,10 +110,10 @@ class Product:
         self.n_sales = value
 
     def get_n_averagePrice(self):
-        return self.n_averagePrice
+        return self.t_averagePrice
 
     def set_n_averagePrice(self, value: float):
-        self.n_averagePrice = value
+        self.t_averagePrice = value
 
     def get_n_conversionRate(self):
         return self.n_conversionRate
