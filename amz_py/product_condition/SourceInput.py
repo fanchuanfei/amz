@@ -1,7 +1,33 @@
-from amz_py.product_condition.SourceProductClass import Product
-from datetime import datetime
-from openpyxl import load_workbook
+from amz_py.dao.SourceProductClass import Product
 from typing import Set
+import pandas as pd
+import os
+from datetime import datetime, timedelta
+from openpyxl import load_workbook
+
+# 数据源文件转换
+
+def convert_csv_to_xlsx(folder_path):
+    for filename in os.listdir(folder_path):
+        if filename.endswith('.csv'):
+            csv_file = os.path.join(folder_path, filename)
+            excel_file = os.path.splitext(csv_file)[0] + '.xlsx'
+            df = pd.read_csv(csv_file)
+            df.to_excel(excel_file, index=False)
+            os.remove(csv_file)
+            print(f'{filename} 已转换为 {os.path.basename(excel_file)} 并已删除原CSV文件')
+        #
+
+
+# 获取前一天的日期
+
+def getpredate(folder_path):
+    yesterday = datetime.now() - timedelta(days=1)
+    formatted_yesterday = yesterday.strftime('%d-%m-%y')
+    new_file_name = f"BusinessReport-{formatted_yesterday}.xlsx"
+
+    # 拼接为文件
+    fileaddress = os.path.join(folder_path, new_file_name)
 
 # 打开资源表 装入字典
 
