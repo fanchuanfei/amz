@@ -161,4 +161,4 @@ def read_brandpf(brandpf_fileaddress):
 
 # 广告表装入字典
 def read_ad(Ad_fileaddress):
-
+    pass
