@@ -1,12 +1,5 @@
-import pandas as pd
 import os
-from datetime import datetime, timedelta
-from openpyxl.reader.excel import load_workbook
-from sympy import false
-from amz_py.dao.product_base_table.brand_Performance import ProductPerformance
-from amz_py.dao.product_base_table.detailPage_salesTraffic import ChildProduct
-from amz_py.dao.product_base_table.detailPage_salesTraffic import ParentProduct
-
+from datetime import timedelta
 
 
 # 数据源文件转换 并将文件名称修改为前一天
