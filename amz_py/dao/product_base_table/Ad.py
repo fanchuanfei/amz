@@ -3,17 +3,16 @@
 
 # 广告总数据
 
+# 作用 1.用于找到对应的产品基础表， 2. 算总点击
 class AdCampaign:
-    def __init__(self, campaign_name, impressions, clicks, spend, acos, ctr, cpc, sales, sales_revenue):
-        self.campaign_name = campaign_name  # 广告组合名称
-        self.impressions = impressions  # 展示量
-        self.clicks = clicks  # 点击量
-        self.spend = spend  # 花费
-        self.acos = acos  # 广告成本销售比(ACOS)
-        self.ctr = ctr  # 点击率(CTR)
-        self.cpc = cpc  # 每次点击成本
-        self.sales = sales  # 销量
-        self.sales_revenue = sales_revenue  # 销售额
+
+    # 广告活动名称为 key ，广告对象为value
+    ManualAd_dict: dict = {}
+    AutomaticAd_dict: dict = {}
+
+    def __init__(self, Ad_portfolio_name):
+        self.Ad_portfolio_name = Ad_portfolio_name  # 广告组合名称
+
 
     def get_campaign_name(self):
         return self.campaign_name
@@ -71,7 +70,9 @@ class AdCampaign:
 
 # 关键词
 
-class Keyword(AdCampaign):
+class ManualAdKeyword(AdCampaign):
+
+
     def __init__(self, keyword, match_type, campaign_name, impressions, clicks, spend, acos, ctr, cpc, sales,
                  sales_revenue):
         super().__init__(campaign_name, impressions, clicks, spend, acos, ctr, cpc, sales, sales_revenue)
@@ -84,6 +85,22 @@ class Keyword(AdCampaign):
         self.keyword = keyword
 
 
+class AutomaticAdKeyword(AdCampaign):
+
+
+    def __init__(self, keyword, match_type, campaign_name, impressions, clicks, spend, acos, ctr, cpc, sales,
+                 sales_revenue):
+        super().__init__(campaign_name, impressions, clicks, spend, acos, ctr, cpc, sales, sales_revenue)
+        self.keyword = keyword  # 客户搜索词
+
+    def get_keyword(self):
+        return self.keyword
+
+    def set_keyword(self, keyword):
+        self.keyword = keyword
+
+
+
 # 手动广告
 
 class ManualAd(AdCampaign):
@@ -92,9 +109,18 @@ class ManualAd(AdCampaign):
     widely_keywords: dict = {}
     phrase_keywords: dict = {}
 
-    def __init__(self, campaign_name, impressions, clicks, spend, acos, ctr, cpc, sales, sales_revenue):
-        super().__init__(campaign_name, impressions, clicks, spend, acos, ctr, cpc, sales, sales_revenue)
-        pass
+    def __init__(self, campaign_name, impressions, clicks, spend, acos, ctr, cpc, sales, sales_revenue,
+                 Ad_portfolio_name):
+        super().__init__(Ad_portfolio_name)
+
+        self.impressions = impressions  # 展示量
+        self.clicks = clicks  # 点击量
+        self.spend = spend  # 花费
+        self.acos = acos  # 广告成本销售比(ACOS)
+        self.ctr = ctr  # 点击率(CTR)
+        self.cpc = cpc  # 每次点击成本
+        self.sales = sales  # 销量
+        self.sales_revenue = sales_revenue  # 销售额
 
     def add_accurate_keywords(self, keyword: Keyword):
         self.accurate_keywords.update({keyword.keyword: keyword})

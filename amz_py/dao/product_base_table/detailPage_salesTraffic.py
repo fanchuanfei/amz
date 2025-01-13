@@ -1,39 +1,4 @@
 # 详情页面销售和流量
-
-
-class ParentProduct:
-    def __init__(self, parent_asin=None,parent_sku=None):
-        self.parent_asin = parent_asin  # 父 ASIN
-        self.parent_sku = parent_sku   # 父 SKu
-        self.child_count = 0  # 子类个数
-        self.childs = []  # 容器，存储子类实例
-
-    def add_child(self, child):
-        """向父类中添加一个子类实例"""
-        if isinstance(child, ChildProduct):
-            self.childs.append(child)
-            self.child_count += 1
-        else:
-            print("添加失败：必须是 ProductStats 类型的实例")
-
-    def get_parent_asin(self):
-        return self.parent_asin
-
-    def set_parent_asin(self, parent_asin):
-        self.parent_asin = parent_asin
-
-    def get_parent_sku(self):
-        return self.parent_sku
-
-    def set_parent_sku(self,parent_sku):
-        self.parent_sku = parent_sku
-
-    def get_child_count(self):
-        return self.child_count
-
-    def get_childs(self):
-        return self.childs
-
 class ChildProduct:
     def __init__(self, child_asin=None, title=None, sku=None,  #（子）ASIN  标题  SKU
                  total_sessions=0, total_sessions_b2b=0,  # 会话数
@@ -164,3 +129,35 @@ class ChildProduct:
 
     def set_total_ordered_products_b2b(self, total_ordered_products_b2b):
         self.total_ordered_products_b2b = total_ordered_products_b2b
+
+class ParentProduct:
+    def __init__(self, parent_asin=None,parent_sku=None):
+        self.parent_asin = parent_asin  # 父 ASIN
+        self.parent_sku = parent_sku   # 父 SKu
+        self.child_count = 0  # 子类个数
+        self.childs_dict = {}  # 容器，存储子类实例
+
+    def add_child(self, child: ChildProduct):
+        """向父类中添加一个子类实例"""
+        self.childs_dict.update({child.child_asin:child})
+
+        self.child_count+=1
+
+    def get_parent_asin(self):
+        return self.parent_asin
+
+    def set_parent_asin(self, parent_asin):
+        self.parent_asin = parent_asin
+
+    def get_parent_sku(self):
+        return self.parent_sku
+
+    def set_parent_sku(self,parent_sku):
+        self.parent_sku = parent_sku
+
+    def get_child_count(self):
+        return self.child_count
+
+    def get_childs(self):
+        return self.childs_dict
+
