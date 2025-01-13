@@ -1,10 +1,10 @@
-from openpyxl import load_workbook
+
 from amz_py.product_condition.SourceInput import getdate
 # from test.TargetOutput import update_sheet
 
-# 遍历字典
 
-fileaddress= r"C:\Users\Administrator\Desktop\小蜗牛\BusinessReport-14-11-24(1).xlsx"
+# 存放数据源的文件地址
+fileaddress= r"C:\Users\Administrator\Desktop\小蜗牛"
 
 productdict = getdate(fileaddress)
 

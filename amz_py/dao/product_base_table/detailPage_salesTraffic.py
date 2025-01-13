@@ -8,7 +8,6 @@ class ParentProduct:
         self.child_count = 0  # 子类个数
         self.childs = []  # 容器，存储子类实例
 
-
     def add_child(self, child):
         """向父类中添加一个子类实例"""
         if isinstance(child, ChildProduct):
@@ -35,12 +34,7 @@ class ParentProduct:
     def get_childs(self):
         return self.childs
 
-
-
-
-
 class ChildProduct:
-
     def __init__(self, child_asin=None, title=None, sku=None,  #（子）ASIN  标题  SKU
                  total_sessions=0, total_sessions_b2b=0,  # 会话数
                  page_views_total=0,page_views_total_b2b=0,  # 页面浏览数
