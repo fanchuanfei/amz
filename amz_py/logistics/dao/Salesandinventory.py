@@ -2,12 +2,13 @@
 # 当天的库存 和 前七天的销售数量
 class SalesInventory:
 
-    def __init__(self, asin, sku, product_name, quality=None, current_inventory=None):
+    def __init__(self, asin, sku, product_name, currentAndReserve_inventory=None, Inbound_inventory=None, Sales_seven=None):
         self.asin = asin
         self.sku = sku
         self.product_name = product_name
-        self.current_inventory = current_inventory
-        self.quality = quality
+        self.currentAndReserve_inventory = currentAndReserve_inventory
+        self.Inbound_inventory = Inbound_inventory
+        self.Sales_seven = Sales_seven
 
     def get_asin(self) -> str:
         return self.asin
@@ -31,19 +32,19 @@ class SalesInventory:
 
     # Getter and Setter for current_inventory
     def get_current_inventory(self) -> int:
-        return self.current_inventory
+        return self.currentAndReserve_inventory
 
     def set_current_inventory(self, value: int):
-        self.current_inventory = value
+        self.currentAndReserve_inventory = value
 
     # Getter and Setter for preSevenSales
     def get_quality(self) -> int:
-        return self.quality
+        return self.Sales_seven
 
     def set_quality(self, value: int):
-        self.quality = value
+        self.Sales_seven = value
 
 
     def add_quality(self,quality):
-        self.quality+=quality
+        self.Sales_seven+=quality
 
