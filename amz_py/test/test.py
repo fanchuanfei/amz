@@ -1,14 +1,22 @@
 import os
+
+import openpyxl.utils
 from openpyxl.reader.excel import load_workbook
 
-folder_path = r"C:\Users\Administrator\Desktop\test\工作簿1.xlsx"
+from amz_py.logistics.restock import remove_colume
 
-sourceworkboook = load_workbook(folder_path)
-sourceworksheet = sourceworkboook.active
+folder_path = r"E:\desktop\test\1.xlsx"
 
-date = sourceworksheet.cell(1,3).value
-date1 = sourceworksheet.cell(1,4).value
-print(date)
-print(date1)
+# sourceworkboook = load_workbook(folder_path)
+# sourceworksheet = sourceworkboook.active
+#
+# remove_colume(sourceworksheet, 4)
+
+start_index = openpyxl.utils.cell.column_index_from_string('L')
+end_index = openpyxl.utils.cell.column_index_from_string('P')
+for col in range(start_index,end_index+1):
+    print(col)
+
+
 
 
