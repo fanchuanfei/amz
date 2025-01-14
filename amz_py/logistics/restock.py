@@ -1,6 +1,8 @@
 import pandas as pd
 from datetime import datetime
 
+from openpyxl.reader.excel import load_workbook
+
 from amz_py.logistics.dao.Salesandinventory import SalesInventory
 
 
@@ -29,7 +31,7 @@ def convert_txt_to_xlsx(txt_file_path, xlsx_file_path):
 # 读取前七天的销量  读取为字典， 使用SKu作为key
 def read_Sales(fileaddress):
     sales_dict: dict = {}
-    sourceworkboook = load_workbook(datailpage_fileaddress)
+    sourceworkboook = load_workbook(fileaddress)
     sourceworksheet = sourceworkboook.active
 
     for i in range(2, sourceworksheet.max_row+1):
