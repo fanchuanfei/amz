@@ -1,8 +1,12 @@
 import os
 from datetime import timedelta, datetime
+from itertools import count
+
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
 from sympy import false
+
+from amz_py.product_condition.dao.Ad import AdCampaign, AdKeyword
 from amz_py.product_condition.dao.brand_Performance import ProductPerformance
 from amz_py.product_condition.dao.detailPage_salesTraffic import ChildProduct, ParentProduct
 
@@ -22,11 +26,10 @@ def convert_csv_to_xlsx(folder_path):
 
 # 开始读取数据表
 def start_read_excel(folder_path):
-    # 产品基础表的表格名称为  BusinessReport-20-12-24
     yesterday = datetime.now() - timedelta(days=1)
     formatted_yesterday = yesterday.strftime('%d-%m-%y')
 
-    # 拼接产品基础表文件名 并读取文件
+    # 拼接产品基础表文件名 并读取文件 基础表的表格名称为  BusinessReport-20-12-24
     datailpage_file_name = f"BusinessReport-{formatted_yesterday}.xlsx"
     datailpage_fileaddress = os.path.join(folder_path, datailpage_file_name)
     read_datailpage(datailpage_fileaddress)
@@ -159,4 +162,76 @@ def read_brandpf(brandpf_fileaddress):
 
 # 广告表装入字典
 def read_ad(Ad_fileaddress):
-    pass
+
+    ad_dict: dict = {}
+    sourceworkboook = load_workbook(Ad_fileaddress)
+    sourceworksheet = sourceworkboook.active
+
+    for row in range(2, sourceworksheet.max_row + 1):
+        if is_finished_reading:
+            break
+
+        ad_portfolio_name = sourceworksheet.cell(row,2).value
+        adCampaign = AdCampaign(ad_portfolio_name)
+
+        campaign_name = sourceworksheet.cell(row,4).value
+        Ad_Group_Name = sourceworksheet.cell(row,5).value
+        match_type= sourceworksheet.cell(row,8).value
+        keyword= sourceworksheet.cell(row,9).value
+        impressions= sourceworksheet.cell(row,10).value
+        clicks= sourceworksheet.cell(row,11).value
+        ctr= sourceworksheet.cell(row,12).value
+        cpc= sourceworksheet.cell(row,13).value
+        spend= sourceworksheet.cell(row,14).value
+        sales_revenue= sourceworksheet.cell(row,15).value
+        acos= sourceworksheet.cell(row,16).value
+        sales= sourceworksheet.cell(row,19).value
+        cr= sourceworksheet.cell(row,20).value
+        adKeyword = AdKeyword(campaign_name,Ad_Group_Name,match_type, keyword,  impressions, clicks, ctr, cpc, spend, sales_revenue, acos, sales,cr)
+
+        advertising_type = sourceworksheet.cell(row, 7).value
+
+        if advertising_type == "手动":
+            adCampaign.
+
+        # 字典中没有
+        if ad_portfolio_name not in ad_dict:
+            ad_dict.update({ad_portfolio_name:adCampaign})
+        else:
+            # 字典中有
+            adCampaign = ad_dict.get(ad_portfolio_name)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
