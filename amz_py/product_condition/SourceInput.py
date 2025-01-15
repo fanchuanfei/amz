@@ -4,7 +4,6 @@ from itertools import count
 
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
-from sympy import false
 
 from amz_py.product_condition.dao.Ad import AdCampaign, AdKeyword
 from amz_py.product_condition.dao.brand_Performance import ProductPerformance
@@ -49,8 +48,8 @@ def start_read_excel(folder_path):
 
 
 # 判断表格是否读完
-def is_finished_reading(sourceworksheet,row,column):
-     parentain = sourceworksheet.cell(row,column).value
+def is_finished_reading(sourceworksheet, row, column):
+     parentain = sourceworksheet.cell(row, column).value
 
      if parentain is None:
          return True
@@ -168,6 +167,8 @@ def read_ad(Ad_fileaddress):
     sourceworksheet = sourceworkboook.active
 
     for row in range(2, sourceworksheet.max_row + 1):
+
+        # 没有数据就退出
         if is_finished_reading:
             break
 
@@ -191,8 +192,11 @@ def read_ad(Ad_fileaddress):
 
         advertising_type = sourceworksheet.cell(row, 7).value
 
+        # 判断加到哪个list中
         if advertising_type == "手动":
-            adCampaign.
+            adCampaign.add_ManualAd_keyword(adKeyword)
+        else:
+            adCampaign.add_ManualAd_keyword(adKeyword)
 
         # 字典中没有
         if ad_portfolio_name not in ad_dict:
@@ -200,6 +204,8 @@ def read_ad(Ad_fileaddress):
         else:
             # 字典中有
             adCampaign = ad_dict.get(ad_portfolio_name)
+
+
 
 
 
