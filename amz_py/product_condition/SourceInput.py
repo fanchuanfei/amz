@@ -172,11 +172,9 @@ def read_ad(Ad_fileaddress):
         if is_finished_reading:
             break
 
-        ad_portfolio_name = sourceworksheet.cell(row,2).value
-        adCampaign = AdCampaign(ad_portfolio_name)
-
         campaign_name = sourceworksheet.cell(row,4).value
         Ad_Group_Name = sourceworksheet.cell(row,5).value
+        advertising_type = sourceworksheet.cell(row, 7).value
         match_type= sourceworksheet.cell(row,8).value
         keyword= sourceworksheet.cell(row,9).value
         impressions= sourceworksheet.cell(row,10).value
@@ -188,22 +186,30 @@ def read_ad(Ad_fileaddress):
         acos= sourceworksheet.cell(row,16).value
         sales= sourceworksheet.cell(row,19).value
         cr= sourceworksheet.cell(row,20).value
+
         adKeyword = AdKeyword(campaign_name,Ad_Group_Name,match_type, keyword,  impressions, clicks, ctr, cpc, spend, sales_revenue, acos, sales,cr)
 
-        advertising_type = sourceworksheet.cell(row, 7).value
 
-        # 判断加到哪个list中
-        if advertising_type == "手动":
-            adCampaign.add_ManualAd_keyword(adKeyword)
-        else:
-            adCampaign.add_ManualAd_keyword(adKeyword)
 
+
+        # 字典中有
+        if sourceworksheet.cell(row,2).value in ad_dict:
+            adCampaign = ad_dict.get(sourceworksheet.cell(row,2).value)
+            if advertising_type == "手动":
+                adCampaign.add_ManualAd_keyword(adKeyword)
+            else:
+                adCampaign.add_automaticAd_keyword(adKeyword)
         # 字典中没有
-        if ad_portfolio_name not in ad_dict:
-            ad_dict.update({ad_portfolio_name:adCampaign})
         else:
-            # 字典中有
-            adCampaign = ad_dict.get(ad_portfolio_name)
+            adCampaign = AdCampaign(sourceworksheet.cell(row, 2).value)
+            if advertising_type == "手动":
+                adCampaign.add_ManualAd_keyword(adKeyword)
+            else:
+                adCampaign.add_automaticAd_keyword(adKeyword)
+
+
+
+
 
 
 
