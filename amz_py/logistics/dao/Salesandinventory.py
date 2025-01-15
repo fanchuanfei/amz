@@ -23,7 +23,8 @@ class SalesInventory:
         self.sku = value
 
     def get_product_name(self) -> str:
-        return self.product_name
+        product_name = self.product_name.split(",")[0]
+        return product_name
 
     def set_product_name(self, value: str):
         self.product_name = value

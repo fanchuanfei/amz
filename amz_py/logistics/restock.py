@@ -1,10 +1,10 @@
 import os
+from collections import OrderedDict
 
 import openpyxl.utils
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
 from amz_py.logistics.dao.Salesandinventory import SalesInventory
-
 
 
 # 将 txt文件转换为 xlsx文件
@@ -34,11 +34,6 @@ def convert_cvstxt_to_xlsx(folder_path):
                     print(f"Converted: {filename} -> {os.path.basename(output_file)}")
                 except Exception as e:
                     print(f"Failed to convert {filename}: {e}")
-
-
-
-
-
 
 # 读取库存数据
 def read_inventory(folder_path):
@@ -74,7 +69,6 @@ def read_inventory(folder_path):
 
     return inventory_dict
 
-
 # 读取前七天的销量
 def read_Sales(folder_path, inventory_dict):
     inventory_fileaddress = os.path.join(folder_path,"销量.xlsx")
@@ -96,7 +90,6 @@ def read_Sales(folder_path, inventory_dict):
 
     return inventory_dict
 
-
 # 开始读取
 def read_inventoryAndSales(folder_path):
     inventory_dict = read_inventory(folder_path)
@@ -106,7 +99,7 @@ def read_inventoryAndSales(folder_path):
     return inventoryAndSales_dict
 
 # 移动指定行的数据 并判断有几行数据
-def remove_colume(sourceworksheet, row: int):
+def remove_colume(sourceworksheet, row):
     """
     将指定单元格中有数据的列向前移动一列。
     :param sourceworksheet: 表格
@@ -134,7 +127,55 @@ def remove_colume(sourceworksheet, row: int):
 
     return count
 
+# 获得增长率
+def get_YoY_growth(row, sourceworksheet, count):
+    """
+    Calculate the year-over-year (YoY) growth rate for the given columns.
 
+    Parameters:
+    row (int): The row number to calculate the growth rate for.
+    sourceworksheet (openpyxl worksheet object): The worksheet containing the data.
+    count (int): The number of columns to consider, starting from column P.
+
+    Returns:
+    float: The YoY growth rate.
+    """
+    # Define the column letters
+    columns = ['P', 'O', 'N', 'M', 'L', 'K']
+
+    # Get the values for the current row
+    current_values = [sourceworksheet[f'{col}{row}'].value for col in columns[:count]]
+
+    # Get the values for the previous year (i.e., the row above)
+    previous_values = [sourceworksheet[f'{col}{row-1}'].value for col in columns[:count]]
+
+    # Calculate the sum of the current values
+    current_sum = sum(current_values)
+
+    # Calculate the sum of the previous values
+    previous_sum = sum(previous_values)
+
+    # Calculate the YoY growth rate
+    growth_rate = ((current_sum - previous_sum) / previous_sum) * 100
+
+    return growth_rate
+
+# 将字典的数据排序
+def sort_dict_values_by_key(input_dict):
+    """
+    根据字典的键对其值进行排序，并存入一个列表。
+    参数：
+        input_dict (dict): 输入的字典。
+    返回：
+        list: 按键排序后的值的列表。
+    """
+    # 使用字典按键排序
+    sorted_dict = OrderedDict(sorted(input_dict.items()))
+
+    # 提取排序后的值
+    sorted_values = list(sorted_dict.values())
+
+    return sorted_values
 
 # 写入销量和库存
 def write_Salesandinventory(restocking_address, inventoryAndSales_dict):
@@ -147,33 +188,57 @@ def write_Salesandinventory(restocking_address, inventoryAndSales_dict):
     # 2.依次读取表中的sku 判断表示是否有字典中的SKU
 
 
-    for row in range(5,sourceworksheet.max_row+1):
+    for row in range(5, sourceworksheet.max_row+1):
         sku = sourceworksheet.cell(row, 2)
 
         # 3.如果字典中存在 更新表的数据 ，并删除字典中的数据
         if sku in inventoryAndSales_dict:
             # 获取库存对象
             salesInventory = inventoryAndSales_dict.get(sku)
-            # 填入现有库存
+            # 填入可售库存
             currentAndReserve_inventory = salesInventory.get_currentAndReserve_inventory()
             sourceworksheet.cell(row, 4, currentAndReserve_inventory)
             # 填入入库库存
             Inbound_inventory = salesInventory.get_Inbound_inventory()
             sourceworksheet.cell(row,6,Inbound_inventory)
-            # 将过往周数据列向前移动
-            count = remove_colume(row, sourceworksheet)
+            # 将过往周数据列向前移动 ,并得到有几列数据
+            count = remove_colume(sourceworksheet,row)
             # 填写上一周的销量
             quality = salesInventory.get_quality()
             sourceworksheet.cell(row, 16, quality)
+            # 填写增长率
+            YoY_growth = get_YoY_growth(row,sourceworksheet,count)
+            sourceworksheet.cell(row,18,YoY_growth)
 
-
-
-    #
-
-    # 4.如果有同一个Fsku下的其他子Sku 插入一行到其附近 ，并删除字典中的数据
+            inventoryAndSales_dict.pop(sku)
 
     # 5.将剩余表中没有的数据，获取所有的key根据倒数第二个进行排序取出 遍历到表中
-    pass
+
+    sorted_values = sort_dict_values_by_key(inventoryAndSales_dict)
+
+    count = 0
+    for row in range(sourceworksheet.max_row+1,len(sorted_values)):
+        salesInventory = sorted_values[count]
+
+        sku = salesInventory.get_sku()
+        sourceworksheet.cell(row,2,sku)
+
+        product_name = salesInventory.get_product_name()
+        sourceworksheet.cell(row, 3, product_name)
+
+        currentAndReserve_inventory = salesInventory.get_currentAndReserve_inventory()
+        sourceworksheet.cell(row, 4, currentAndReserve_inventory)
+
+        Inbound_inventory = salesInventory.get_Inbound_inventory()
+        sourceworksheet.cell(row, 5, Inbound_inventory)
+
+        quality = salesInventory.get_quality()
+        sourceworksheet.cell(row, 16, quality)
+
+        sourceworksheet.cell(row, 8, 100)
+
+        count += 1
+
 
 
 
